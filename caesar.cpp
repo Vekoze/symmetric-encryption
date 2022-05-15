@@ -24,17 +24,13 @@ void caesar_file(string in_path, string out_path, int shift, Cipher type){
     ifstream in(in_path);
     ofstream out(out_path);
 
-    if(!in)
-        return;
-
-    if(!in.is_open() || !out.is_open())
+    if(!in || !in.is_open() || !out.is_open())
         return;
 
     string line;
     while(getline(in, line)){
         out << caesar_string(line, shift, type);
     }
-
     in.close();
     out.close();
 }
