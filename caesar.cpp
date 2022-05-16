@@ -35,7 +35,7 @@ void caesar_file(string in_path, string out_path, int shift, Cipher type){
     out.close();
 }
 
-string caesar_break(string ciphertext){
+int caesar_break(string ciphertext){
 
     vector<pair<int, float>> shift_rpd_pairs;
     vector<float> en_freq = {6.51, 1.89, 3.06, 5.08, 17.4, 
@@ -56,6 +56,7 @@ string caesar_break(string ciphertext){
             pt_freq[alphabet_index]+=1.0f;
             counter++;
         }
+
         for(float &f : pt_freq){
             f = f/counter*100.0;
         }
@@ -64,7 +65,7 @@ string caesar_break(string ciphertext){
         int valids = 0;
         for(unsigned int i = 0; i<ALPHABET; i++){
             if(pt_freq[i]==0.0f) continue;
-            rpd = relative_percent_difference(en_freq[i], pt_freq[i]);
+            rpd += relative_percent_difference(en_freq[i], pt_freq[i]);
             valids++;
         }
 
@@ -77,12 +78,15 @@ string caesar_break(string ciphertext){
         [](pair<int, float> p1, pair<int, float> p2) -> bool {
             return (p1.second<p2.second);
         });
-
+/*
+    for(auto p : shift_rpd_pairs)
+        cout << p.first << " " << p.second << endl;
+*/
     int best_shift = shift_rpd_pairs.at(0).first;
     float best_rpd = shift_rpd_pairs.at(0).second;
 
     cout << setprecision(3);
     cout << "[DEBUG] Closest match at RPD: " << best_rpd << " | " << best_shift << " shifts." << endl;
 
-    return caesar_string(ciphertext, best_shift, Cipher::Decrypt);
+    return best_shift;
 }
